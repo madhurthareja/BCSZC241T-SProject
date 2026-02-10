@@ -3,6 +3,7 @@ from typing import Literal, Optional
 
 from vidmark.core import FrameSelector, WatermarkAlgorithm, EveryNthFrame, NoOpWatermark
 from vidmark.io import VideoFile, VideoWriter
+from vidmark.utils import DetectionResult
 
 Strength = Literal["low", "medium", "high"]
 
@@ -73,5 +74,5 @@ class Watermarker:
             writer.close()
             video.close()
 
-    def detect(self, input: str):
+    def detect(self, input: str) -> DetectionResult:
         return None
