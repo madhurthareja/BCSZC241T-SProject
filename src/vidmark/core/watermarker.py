@@ -6,6 +6,7 @@ from vidmark.io import VideoFile, VideoWriter
 
 Strength = Literal["low", "medium", "high"]
 
+
 @dataclass(slots=True)
 class WatermarkConfig:
     key: str
