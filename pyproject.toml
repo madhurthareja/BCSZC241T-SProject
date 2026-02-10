@@ -1,7 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
 [project]
-name = "bcszc241t-sproject"
+name = "vidmark"
 version = "0.1.0"
-description = "Add your description here"
+description = "Video watermarking library"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "numpy>=2.4.2",
+    "opencv-python>=4.13.0.92",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

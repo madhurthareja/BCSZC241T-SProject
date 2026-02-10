@@ -1,6 +1,5 @@
-def main():
-    print("Hello from bcszc241t-sproject!")
+from vidmark import Watermarker
 
+wm = Watermarker(key="secret", strength='medium')
+wm.embed("input.mp4", "output.mp4")
 
-if __name__ == "__main__":
-    main()

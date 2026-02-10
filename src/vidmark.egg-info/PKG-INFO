@@ -1,0 +1,10 @@
+Metadata-Version: 2.4
+Name: vidmark
+Version: 0.1.0
+Summary: Video watermarking library
+Requires-Python: >=3.12
+Description-Content-Type: text/markdown
+Requires-Dist: numpy>=2.4.2
+Requires-Dist: opencv-python>=4.13.0.92
+
+Study Project
