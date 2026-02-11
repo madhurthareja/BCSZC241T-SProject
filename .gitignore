@@ -1,1 +1,5 @@
 ./.idea
+src/vidmark/__pycache__
+src/vidmark/core/__pycache__
+src/vidmark/io/__pycache__
+src/vidmark/utils/__pycache__

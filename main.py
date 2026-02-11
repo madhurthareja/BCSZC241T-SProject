@@ -1,5 +1,8 @@
 from vidmark import Watermarker
 
-wm = Watermarker(key="secret", strength='medium')
-wm.embed("input.mp4", "output.mp4")
+wm = Watermarker(key="secret", strength="high")
+wm.embed(
+	"demo.mp4",
+	"demo_watermarked.mp4",
+)
 
