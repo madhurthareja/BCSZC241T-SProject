@@ -99,7 +99,13 @@ class DctSpreadSpectrumWatermark(WatermarkAlgorithm):
         seq = self.sequence
         seq_len = len(seq)
         indices = np.arange(coeffs.size) % seq_len
-        return float(np.dot(coeffs, seq[indices]) / coeffs.size)
+        centered = coeffs - float(np.mean(coeffs))
+        seq_slice = seq[indices]
+        numerator = float(np.dot(centered, seq_slice))
+        denom = float(np.linalg.norm(centered) * np.linalg.norm(seq_slice))
+        if denom == 0.0:
+            return 0.0
+        return numerator / denom
 
     def extract_coefficients(self, frame: np.ndarray, frame_index: int) -> np.ndarray:
         y_plane, _, _ = self._split_ycrcb(frame)

@@ -60,7 +60,8 @@ Detection (implemented, not calibrated)
 
 Detection extracts the same coefficient locations and computes a normalized correlation:
 
-	T = (1/L) * sum_i X_i * w_i
+	T = sum_i (X_i - mean(X)) * w_i
+	    / (||X - mean(X)|| * ||w||)
 
 The current code returns a per-frame score and averages across frames in
 [src/vidmark/utils/result.py](src/vidmark/utils/result.py). Thresholding and calibration
