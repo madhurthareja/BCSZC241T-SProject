@@ -103,3 +103,14 @@ Limitations and Open Work
 - No PSNR/SSIM or ROC evaluation harness is included yet.
 - Block alignment assumes no cropping or scaling.
 - Video encoding settings (codec, bitrate) can affect artifact levels.
+
+Test Notes
+
+- The end-to-end MP4 detection test with the correct key can fail on some systems because MP4 encoding (mp4v) can attenuate the DCT-domain watermark in small synthetic clips. See [tests/test_watermarking.py](tests/test_watermarking.py) for the test setup.
+- Passed locally: deterministic sequence generation, medium-strength transparency check, incorrect-key detection, and multi-frame aggregation stability.
+
+Screenshot-friendly pytest output (verbose with test names):
+
+```bash
+pytest -vv --color=yes | tee pytest_output.txt
+```
