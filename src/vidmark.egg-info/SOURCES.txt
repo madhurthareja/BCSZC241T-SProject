@@ -16,3 +16,4 @@ src/vidmark/io/video_file.py
 src/vidmark/io/video_writer.py
 src/vidmark/utils/__init__.py
 src/vidmark/utils/result.py
+tests/test_watermarking.py
