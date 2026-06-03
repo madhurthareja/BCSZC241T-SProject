@@ -1,4 +1,5 @@
 from fastapi import FastAPI, File, UploadFile, Form
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 
 from app.schemas import (
@@ -23,6 +24,13 @@ app = FastAPI(
     title="Vidmark FastAPI Backend",
     description="Backend server for video watermark embedding, detection, metadata, calibration, and bias analysis.",
     version="1.0.0",
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 

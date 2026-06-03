@@ -5,3 +5,5 @@ src/vidmark/io/__pycache__
 src/vidmark/utils/__pycache__
 *_watermarked.mp4
 __pychache__/
+dist/
+node_modules/
