@@ -36,6 +36,35 @@ class VideoFile(VidmarkFile):
                 break
             yield frame
 
+    def frames_with_index(self, reference_fps: Optional[float] = None) -> Iterator[tuple[np.ndarray, int]]:
+        """Yields (frame, sync_index) where sync_index is recovered from the
+        frame's own presentation timestamp rather than read-order position.
+
+        A positional counter desynchronises the moment any upstream frame is
+        dropped (every later frame's counter value no longer matches what it
+        was at embed time). PTS survives frame drops even when a re-encoder
+        renumbers the container's frame count, so re-deriving the index from
+        timestamp keeps embedding and detection aligned on the frames that
+        actually survived, without needing to know the drop pattern.
+
+        ``reference_fps`` must be the *original* (pre-drop) frame rate used at
+        embed time, not this file's own reported rate: a variable-frame-rate
+        re-encode after a drop rewrites the container's average FPS metadata
+        (e.g. 29.97 -> 15.15 after a 50% drop), and using that corrupted value
+        silently recovers the wrong index. Detection therefore needs the
+        original fps supplied out-of-band (alongside the key), the same way
+        it already needs the key itself.
+        """
+        cap = self.load_file()
+        fps = reference_fps if reference_fps is not None else self.metadata.fps
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                break
+            pos_msec = cap.get(cv2.CAP_PROP_POS_MSEC)
+            sync_index = round(pos_msec / 1000.0 * fps) if fps > 0 else 0
+            yield frame, sync_index
+
     def load_file(self) -> cv2.VideoCapture:
         if self._cap is None:
             cap = cv2.VideoCapture(self.path)
