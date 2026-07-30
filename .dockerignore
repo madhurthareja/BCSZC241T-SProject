@@ -1,0 +1,24 @@
+# Files that should never reach the backend build context.
+.venv
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+.git
+.gitignore
+.idea
+.DS_Store
+uploaded_files
+output_files
+frontend/node_modules
+frontend/dist
+tests
+scripts
+demo*.mp4
+input*.mp4
+*.log
+.cache
+.mypy_cache
+.ruff_cache
+*.egg-info

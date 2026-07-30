@@ -1,0 +1,6 @@
+# Frontend build context — node_modules and output are rebuilt inside the image.
+node_modules
+dist
+.git
+.DS_Store
+.vite

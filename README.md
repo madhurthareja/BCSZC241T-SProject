@@ -114,3 +114,28 @@ Screenshot-friendly pytest output (verbose with test names):
 ```bash
 pytest -vv --color=yes | tee pytest_output.txt
 ```
+
+Container Deployment
+
+Multi-stage Dockerfiles and a compose file ship the backend (FastAPI + ffmpeg) and frontend (built Vite SPA served by nginx) together. nginx on the frontend container reverse-proxies `/api/*` to the backend container so the SPA can keep using relative URLs.
+
+The service is **stateless**: every request creates its own tempdir for the upload and output, and the output dir is removed by a background task once the response body finishes streaming. No persistent volume is required.
+
+```bash
+# build + run
+docker compose up --build
+
+# open the UI
+open http://localhost:8080
+```
+
+Configuration (override via shell env or an `.env` file next to `docker-compose.yml`):
+
+- `FRONTEND_PORT` — host port the nginx frontend listens on (default `8080`)
+- `VIDMARK_CORS_ORIGINS` — comma-separated allowlist for the backend CORS middleware (defaults to the Vite dev server and the compose port)
+
+If you need to point the frontend at a backend that is not the compose service (for example when running the frontend container against an already-deployed backend), rebuild the frontend image with `BACKEND_URL` as a build argument:
+
+```bash
+docker compose build --build-arg BACKEND_URL=https://my-backend.example.com
+```
