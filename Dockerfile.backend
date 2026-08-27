@@ -1,0 +1,52 @@
+# syntax=docker/dockerfile:1.6
+# Backend container: FastAPI + vidmark + ffmpeg.
+# Stateless: no persistent volumes, every request gets its own tempdir.
+# Single uvicorn worker — embed is per-request CPU-bound, more workers
+# don't help and complicate state. PORT is read at runtime for Cloud Run.
+FROM python:3.12-slim AS base
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+# ffmpeg is required by vidmark.io.video_writer for H.264 encoding.
+# libgl1 + libsm6 cover opencv-python's video decoding runtime needs.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        ffmpeg \
+        libgl1 \
+        libglib2.0-0 \
+        libsm6 \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Install Python deps first so source changes don't bust the layer cache.
+COPY pyproject.toml uv.lock ./
+COPY src ./src
+COPY app ./app
+
+RUN pip install --upgrade pip \
+    && pip install -e .
+
+# /tmp is small on Cloud Run (default 100MB scratch, can be raised to 1GB);
+# the embed endpoint may write much larger intermediate files for big videos,
+# so we point TMPDIR at a writable scratch dir created from /tmp at runtime
+# and recommend setting --temp-size on deploy.
+ENV TMPDIR=/tmp
+
+EXPOSE 8080
+
+# Cloud Run sets $PORT; default to 8080 for local docker run.
+ENV PORT=8080
+
+# Healthcheck: hit /health with a 30s grace to absorb the opencv/numpy import
+# cost on cold start.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:'+__import__('os').environ.get('PORT','8080')+'/health', timeout=3).read()" \
+    || exit 1
+
+# --proxy-headers + --forwarded-allow-ips='*' lets FastAPI trust the
+# X-Forwarded-* headers that Cloud Run / any reverse proxy injects.
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8080} --proxy-headers --forwarded-allow-ips '*' --timeout-keep-alive 600"]
