@@ -1,3 +1,8 @@
+"""High-level watermarking façade: ``WatermarkConfig`` (key + strength + the
+selector/algorithm pair that drive behaviour) and ``Watermarker`` (the object
+that performs ``embed`` and ``detect`` on full video files, including the
+sync-search offset sweep used to recover from frame-drop re-encodes)."""
+
 from dataclasses import dataclass, field
 from typing import Literal, Optional
 

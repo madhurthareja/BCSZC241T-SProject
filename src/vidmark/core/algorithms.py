@@ -1,3 +1,13 @@
+"""Watermark algorithms and the bitstream/sequence helpers they share.
+
+Defines the abstract ``WatermarkAlgorithm`` interface, the key-to-bipolar-
+sequence + LFSR helpers used to generate position/coefficient pseudorandom
+streams, and the concrete ``DctSpreadSpectrumWatermark`` (spread-spectrum
+embedding in 8x8 block DCT coefficients, sigma-gated and variance-adaptive).
+Also exposes ``NoOpWatermark`` for non-watermarked baselines and the
+``LOW_FREQ_POSITIONS`` coefficient pool used to maximise cross-codec
+robustness."""
+
 import hashlib
 from typing import List, Tuple
 
@@ -6,6 +16,13 @@ import numpy as np
 
 
 class WatermarkAlgorithm:
+    """Interface every concrete watermark algorithm implements.
+
+    ``apply`` embeds the watermark into a frame; ``detect`` returns a single
+    correlation score for the frame (typically normalised in [-1, 1]). The
+    cache methods let detection amortise expensive frame_index-independent
+    work (DCT, sigma, etc.) across many candidate sync offsets."""
+
     def apply(self, frame: np.ndarray, frame_index: int) -> np.ndarray:
         raise NotImplementedError
 
