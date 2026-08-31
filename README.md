@@ -204,3 +204,9 @@ Notes ([tests/test_watermarking.py](tests/test_watermarking.py)):
 - `sync_search` handles constant frame-index offsets, not variable frame drops mid-stream.
 - Video encoding settings (codec, bitrate/CRF, resolution) affect artifact levels and
   detectability; results in `figures/` are specific to the codecs/CRFs they were run at.
+- Corpus and resolution scope is narrow - results are reported for a specific set of test videos
+  and resolution(s); no claim is made about generalization to very high-resolution (4K),
+  low-resolution, or content-type-diverse footage (e.g., screen recordings, animation,
+  high-noise video) where DCT coefficient statistics may differ.
+- No tamper localization - a positive/negative detection result confirms (or fails to confirm)
+  provenance, but gives no spatial or temporal information about where a video was altered.
